@@ -218,12 +218,31 @@ namespace DB338Core
 
         private string[,] ProcessUpdateStatement(List<string> tokens)
         {
+            // <Update Stm> ::= UPDATE TABLE Id '(' <ID List> ')'  ------ NO SUPPORT for <Constraint Opt>
             throw new NotImplementedException();
         }
 
         private string[,] ProcessDropStatement(List<string> tokens)
         {
-            throw new NotImplementedException();
+            // <Drop Stm> ::= DROP TABLE Id
+            string tableName = tokens[2];
+            int dropId = -1;
+            for (int i = 0; i < tables.Count; ++i)
+            {
+                if (tables[i].Name == tableName)
+                {
+                    dropId = i;
+                }
+            }
+            string[,] s = new string[1, 1];
+            if(dropId == -1)
+            {
+                s[0, 0] = "Could not find table " + tableName;
+                return s;
+            }
+            tables.RemoveAt(dropId);
+            s[0, 0] = "Table " + tableName + " dropped";
+            return s;
         }
 
         private string[,] ProcessDeleteStatement(List<string> tokens)
