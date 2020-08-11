@@ -218,8 +218,80 @@ namespace DB338Core
 
         private string[,] ProcessUpdateStatement(List<string> tokens)
         {
-            // <Update Stm> ::= UPDATE TABLE Id '(' <ID List> ')'  ------ NO SUPPORT for <Constraint Opt>
-            throw new NotImplementedException();
+            // <Update Stm> ::= UPDATE TABLE Id '(' <ID List> ')'
+            string updateTableName = tokens[1];
+            bool tableFound = false;
+            foreach (IntSchTable tbl in tables)
+            {
+                if (tbl.Name == updateTableName)
+                {
+                    tableFound = true;
+                    List<string> colNames = new List<string>();
+                    List<string> colValues = new List<string>();
+                    List<string> whereNames = new List<string>();
+                    List<string> whereValues = new List<string>();
+                    int idCount = 2, i = 3;
+
+                    for (; i < tokens.Count; i++)
+                    {
+                        if (tokens[i] == "where")
+                        {
+                            i++;
+                            break;
+                        }
+                        else if (tokens[i] == "," || tokens[i] == "=")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (idCount == 2)
+                            {
+                                colNames.Add(tokens[i]);
+                                idCount--;
+                            }
+                            else
+                            {
+                                colValues.Add(tokens[i]);
+                                idCount = 2;
+                            }
+                        }
+                    }
+
+                    for (; i < tokens.Count; i++)
+                    {
+                        if (tokens[i] == "," || tokens[i] == "=")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (idCount == 2)
+                            {
+                                whereNames.Add(tokens[i]);
+                                idCount--;
+                            }
+                            else
+                            {
+                                whereValues.Add(tokens[i]);
+                                idCount = 2;
+                            }
+                        }
+                    }
+
+                    tbl.Update(colNames, colValues, whereNames, whereValues);
+                }
+            }
+            string[,] s = new string[1, 1];
+            if (!tableFound)
+            {
+                s[0, 0] = "Table " + updateTableName + " not found";
+            }
+            else
+            {
+                s[0, 0] = "Table " + updateTableName + " updated";
+            }
+            return s;
         }
 
         private string[,] ProcessDropStatement(List<string> tokens)

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Text;
 
 namespace DB338Core
@@ -72,6 +74,43 @@ namespace DB338Core
 
             columns.Add(new IntSchColumn(name, type));
             return true;
+        }
+
+        public void Update(List<string> colNames, List<string> colValues, List<string> whereNames, List<string> whereValues)
+        {
+            List<int> rows = new List<int>();
+            // check which rows match the where conditions
+            for (int i = 0; i < whereNames.Count; i++)
+            {
+                for (int j = 0; j < columns.Count; j++)
+                {
+                    if (whereNames[i] == columns[j].Name)
+                    {
+                        for (int k = 0; k < columns[j].items.Count; k++)
+                        {
+                            if (columns[j].items[k] == whereValues[i])
+                            {
+                                rows.Add(k);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // update the values
+            for (int i = 0; i < colNames.Count; i++)
+            {
+                for (int j = 0; j < columns.Count; j++)
+                {
+                    if (colNames[i] == columns[j].Name)
+                    {
+                        foreach (int row in rows)
+                        {
+                            columns[j].items[row] = colValues[i];
+                        }
+                    }
+                }
+            }
         }
     }
 }
