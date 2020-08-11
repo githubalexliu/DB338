@@ -97,6 +97,15 @@ namespace DB338Core
                 }
             }
 
+            // no where condition: update all rows
+            if (whereNames.Count == 0)
+            {
+                for (int i = 0; i < columns[0].items.Count; i++)
+                {
+                    rows.Add(i);
+                }
+            }
+
             // update the values
             for (int i = 0; i < colNames.Count; i++)
             {
