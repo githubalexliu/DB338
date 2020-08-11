@@ -369,7 +369,29 @@ namespace DB338Core
 
         private string[,] ProcessAlterStatement(List<string> tokens)
         {
-            throw new NotImplementedException();
+            string alterTableName = tokens[2];
+            string operation = tokens[3];
+            for (int i = 0; i < tables.Count; i++)
+            {
+                if (alterTableName == tables[i].Name)
+                {
+                    if (operation == "add")
+                    {
+                        tables[i].AddColumn(tokens[5], tokens[6]);
+                    }
+                    else if (operation == "drop")
+                    {
+                        tables[i].DropColumn(tokens[5]);  
+                    }
+                    else if (operation == "alter" || operation == "modify")
+                    {
+                        // not implementing since column type is not used
+                    }
+                }
+            }
+
+            string[,] s = new string[1, 1];
+            return s;
         }
     }
 }

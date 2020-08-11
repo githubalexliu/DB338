@@ -167,5 +167,16 @@ namespace DB338Core
                 }
             }
         }
+
+        public void DropColumn(string name)
+        {
+            foreach (IntSchColumn col in columns)
+            {
+                if (col.Name == name)
+                {
+                    columns.Remove(col);
+                }
+            }
+        }
     }
 }
