@@ -21,6 +21,11 @@ namespace DB338Core
             return items[pos];
         }
 
+        public void Delete(int pos)
+        {
+            items.RemoveAt(pos);
+        }
+
         public string Name { get => name; set => name = value; }
     }
 }

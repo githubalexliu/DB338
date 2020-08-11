@@ -121,5 +121,51 @@ namespace DB338Core
                 }
             }
         }
+
+        public void Delete(List<string> whereNames, List<string> whereValues)
+        {
+            List<int> rows = new List<int>();
+
+            // check which rows match the where conditions
+            for (int i = 0; i < whereNames.Count; i++)
+            {
+                for (int j = 0; j < columns.Count; j++)
+                {
+                    if (whereNames[i] == columns[j].Name)
+                    {
+                        for (int k = 0; k < columns[j].items.Count; k++)
+                        {
+                            if (columns[j].items[k] == whereValues[i])
+                            {
+                                rows.Add(k);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (whereNames.Count == 0)
+            {
+                for (int i = 0; i < columns[0].items.Count; i++)
+                {
+                    rows.Add(i);
+                }
+            }
+
+            // need to sort the list of deleting rows in descending order, otherwise if we want to delete the first two rows,
+            // rows will be (0, 1) and when the first one is deleted, the second one becomes the first and the second delete
+            // will delete the original third one.
+            rows.Sort();
+            rows.Reverse();
+
+            // delete the values
+            for (int i = 0; i < columns.Count; i++)
+            {
+                foreach (int row in rows)
+                {
+                    columns[i].Delete(row);
+                }
+            }
+        }
     }
 }

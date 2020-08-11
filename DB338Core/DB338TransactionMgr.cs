@@ -218,7 +218,7 @@ namespace DB338Core
 
         private string[,] ProcessUpdateStatement(List<string> tokens)
         {
-            // <Update Stm> ::= UPDATE TABLE Id '(' <ID List> ')'
+            // <Update Stm> ::= UPDATE Id SET LIST <ID = EXPR> WHERE LIST <ID = EXPR> 
             string updateTableName = tokens[1];
             bool tableFound = false;
             foreach (IntSchTable tbl in tables)
@@ -319,7 +319,52 @@ namespace DB338Core
 
         private string[,] ProcessDeleteStatement(List<string> tokens)
         {
-            throw new NotImplementedException();
+            // <Update Stm> ::= DELETE FROM Id WHERE LIST <ID = EXPR> 
+            string deleteTableName = tokens[2];
+            bool tableFound = false;
+            foreach (IntSchTable tbl in tables)
+            {
+                if (tbl.Name == deleteTableName)
+                {
+                    tableFound = true;
+                    List<string> whereNames = new List<string>();
+                    List<string> whereValues = new List<string>();
+                    int idCount = 2;
+
+                    for (int i = 4; i < tokens.Count; i++)
+                    {
+                        if (tokens[i] == "," || tokens[i] == "=")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (idCount == 2)
+                            {
+                                whereNames.Add(tokens[i]);
+                                idCount--;
+                            }
+                            else
+                            {
+                                whereValues.Add(tokens[i]);
+                                idCount = 2;
+                            }
+                        }
+                    }
+
+                    tbl.Delete(whereNames, whereValues);
+                }
+            }
+            string[,] s = new string[1, 1];
+            if (!tableFound)
+            {
+                s[0, 0] = "Table " + deleteTableName + " not found";
+            }
+            else
+            {
+                s[0, 0] = "Table " + deleteTableName + " rows deleted";
+            }
+            return s;
         }
 
         private string[,] ProcessAlterStatement(List<string> tokens)
