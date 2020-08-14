@@ -51,5 +51,12 @@ namespace DB338GUI
             }
             TxtResults.Text = s;
         }
+
+        private void helpButton_click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Possible commands:\ncreate table tableid <id list>\nselect <id list> from tableid\n" +
+                "update tableid set <id, value> where <id, value>\ndelete from tableid <id list> where <id, value>" +
+                "drop table tableid\n alter table add/drop/alter <columnid>");
+        }
     }
 }

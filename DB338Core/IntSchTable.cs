@@ -170,12 +170,17 @@ namespace DB338Core
 
         public void DropColumn(string name)
         {
-            foreach (IntSchColumn col in columns)
+            int row = -1;
+            for (int i = 0; i < columns.Count; i++)
             {
-                if (col.Name == name)
+                if (columns[i].Name == name)
                 {
-                    columns.Remove(col);
+                    row = i;
                 }
+            }
+            if (row != -1)
+            {
+                columns.RemoveAt(row);
             }
         }
     }

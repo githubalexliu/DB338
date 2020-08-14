@@ -377,7 +377,7 @@ namespace DB338Core
                 {
                     if (operation == "add")
                     {
-                        tables[i].AddColumn(tokens[5], tokens[6]);
+                        tables[i].AddColumn(tokens[4], tokens[5]);
                     }
                     else if (operation == "drop")
                     {
